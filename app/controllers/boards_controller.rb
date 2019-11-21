@@ -2,13 +2,13 @@ class BoardsController < ApplicationController
   before_action :set_board, only: [:show, :update, :destroy]
   # GET /boards
   def index
-    @boards = Board.all
+    @boards = current_user.boards
     json_response(@boards)
   end
 
   # POST /boards
   def create
-    @board = Board.create!(board_params)
+    @board = current_user.boards.create!(board_params)
     json_response(@board, :created)
   end
 
@@ -33,7 +33,7 @@ class BoardsController < ApplicationController
 
   def board_params
     # whitelist params
-    params.permit(:name, :user_id)
+    params.permit(:name)
   end
 
   def set_board
