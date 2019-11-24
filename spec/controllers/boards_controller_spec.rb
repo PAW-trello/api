@@ -3,16 +3,19 @@
 
 # spec/requests/boards_spec.rb
 require 'rails_helper'
+require 'request'
 
 RSpec.describe 'Boards API', type: :request do
-  let!(:boards) { create_list(:board, 10) }
+  let(:user) { create(:user) }
+  let!(:boards) { create_list(:board, 10, user_id: user.id) }
   # initialize test data
   let(:board_id) { boards.first.id }
-
+  let(:headers) { valid_headers }
   # Test suite for GET /boards
   describe 'GET /boards' do
     # make HTTP get request before each example
-    before { get '/boards' }
+    request.headers.merge! headers
+    before { get '/boards', headers: headers }
 
     it 'returns boards' do
       # Note `json` is a custom helper to parse JSON responses
@@ -27,7 +30,7 @@ RSpec.describe 'Boards API', type: :request do
 
   # Test suite for GET /boards/:id
   describe 'GET /boards/:id' do
-    before { get "/boards/#{board_id}" }
+    before { get "/boards/#{board_id}", headers: headers }
 
     context 'when the record exists' do
       it 'returns the board' do
@@ -59,7 +62,7 @@ RSpec.describe 'Boards API', type: :request do
     let(:valid_attributes) { { name: 'Learn Elm', user_id: 1 } }
 
     context 'when the request is valid' do
-      before { post '/boards', params: valid_attributes }
+      before { post '/boards', params: valid_attributes, headers: headers }
 
       it 'creates a board' do
         expect(json['name']).to eq('Learn Elm')
@@ -71,15 +74,14 @@ RSpec.describe 'Boards API', type: :request do
     end
 
     context 'when the request is invalid' do
-      before { post '/boards', params: { xd: 'Foobar' } }
+      before { post '/boards', params: { xd: 'Foobar' }, headers: headers }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
       end
 
       it 'returns a validation failure message' do
-        expect(response.body)
-            .to match(/Validation failed: Name can't be blank/)
+        expect(response.body).to match(/Validation failed: Name can't be blank/)
       end
     end
   end
@@ -89,7 +91,7 @@ RSpec.describe 'Boards API', type: :request do
     let(:valid_attributes) { { title: 'Shopping' } }
 
     context 'when the record exists' do
-      before { put "/boards/#{board_id}", params: valid_attributes }
+      before { put "/boards/#{board_id}", params: valid_attributes, headers: headers }
 
       it 'updates the record' do
         expect(response.body).to be_empty
@@ -103,8 +105,7 @@ RSpec.describe 'Boards API', type: :request do
 
   # Test suite for DELETE /boards/:id
   describe 'DELETE /boards/:id' do
-    before { delete "/boards/#{board_id}" }
-
+    before { delete "/boards/#{board_id}", headers: headers }
     it 'returns status code 204' do
       expect(response).to have_http_status(204)
     end
