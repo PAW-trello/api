@@ -14,7 +14,8 @@ class BoardsController < ApplicationController
 
   # GET /boards/:id
   def show
-    json_response(@board)
+    board_list = @board.to_json(include: :lists)
+    json_response(board_list)
   end
 
   # PUT /boards/:id
