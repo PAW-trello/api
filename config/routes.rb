@@ -3,6 +3,16 @@ Rails.application.routes.draw do
   post 'signup', to: 'users#create'
   resources :tasks do end
 
+  resources :lists do
+    resources :cards do
+    end
+  end
+
+  resources :cards do
+    resources :comments do
+    end
+  end
+
   resources :boards do
     resources :lists do
     end
