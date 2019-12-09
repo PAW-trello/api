@@ -43,6 +43,7 @@ ActiveRecord::Schema.define(version: 2019_12_09_195707) do
     t.integer "board_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "display_order"
     t.index ["board_id"], name: "index_lists_on_board_id"
   end
 

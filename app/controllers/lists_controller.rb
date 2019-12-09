@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ListsController < ApplicationController
-  before_action :set_board
+  before_action :set_board, only: [:show, :update, :destroy, :index, :create]
   before_action :set_board_list, only: [:show, :update, :destroy]
 
   # GET /boards/:board_id/lists
@@ -30,6 +30,27 @@ class ListsController < ApplicationController
   def destroy
     @list.destroy
     head :no_content
+  end
+
+  def swap
+    list = List.find(params[:id])
+    from = list.display_order
+    to = params[:to]
+    if from > to
+      lists = List.where("display_order between  ? and ?", to, from - 1)
+      lists.each do |l|
+        l.update!(display_order: l.display_order + 1)
+      end
+      list.update(display_order: to)
+      json_response(list.board.lists)
+    else 
+      lists = List.where("display_order between  ? and ?", from + 1, to)
+      lists.each do |l|
+        l.update!(display_order: l.display_order - 1)
+      end
+      list.update(display_order: to)
+      json_response(list.board.lists)
+    end 
   end
 
   private

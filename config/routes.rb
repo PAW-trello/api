@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   post 'auth/login', to: 'authentication#authenticate'
   post 'signup', to: 'users#create'
+  post 'lists/:id/swap', to: 'lists#swap'
   resources :tasks do end
 
   resources :lists do
