@@ -21,7 +21,7 @@ class CommentsController < ApplicationController
 
   # PUT /cards/:card_id/comments/:id
   def update
-    @comment.update(card_params)
+    @comment.update(comment_params)
     head :no_content
   end
 
