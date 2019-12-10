@@ -43,6 +43,6 @@ class CommentsController < ApplicationController
 
 
   def set_card_comment
-    @comment = @card.comment.find_by!(id: params[:id]) if @card
+    @comment = @card.comments.find_by!(id: params[:id]) if @card
   end
 end
